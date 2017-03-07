@@ -40,3 +40,8 @@ captures/
 # Keystore files
 *.jks
 
+.idea/
+
+gradle/wrapper/gradle-wrapper.properties
+
+gradlew
