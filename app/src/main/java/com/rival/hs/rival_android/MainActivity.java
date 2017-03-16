@@ -1,10 +1,22 @@
 package com.rival.hs.rival_android;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
-
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.kakao.auth.ErrorCode;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
@@ -15,14 +27,56 @@ import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
+import org.json.JSONObject;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
-    SessionCallback callback;
+    SessionCallback callback; //kakao
+    private CallbackManager callbackManager; //facebook
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
+
+        callbackManager = CallbackManager.Factory.create();
+
+        LoginButton loginButton = (LoginButton) findViewById(R.id.facebook_login);
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+                startActivity(intent);
+                finish();
+
+               /* GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        Log.v("result",object.toString());
+                    }
+                });
+
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,gender,birthday");
+                graphRequest.setParameters(parameters);
+                graphRequest.executeAsync();*/
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.e("LoginErr",error.toString());
+            }
+        });
+        //facebook
 
         /**카카오톡 로그아웃 요청**/
         //한번 로그인이 성공하면 세션 정보가 남아있어서 로그인창이 뜨지 않고 바로 onSuccess()메서드를 호출합니다.
@@ -44,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
             return;
         }
+        callbackManager.onActivityResult(requestCode, resultCode, data);//facebook
 
         super.onActivityResult(requestCode, resultCode, data);
     }
