@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -39,21 +40,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext()); // SDK 초기화 (setContentView 보다 먼저 실행되어야합니다. 그렇지 않으면 Error.)
         setContentView(R.layout.activity_main);
+
+        hideActionBar();
+
         callbackManager = CallbackManager.Factory.create();  //로그인 응답을 처리할 콜백 관리자
         loginButton = (LoginButton)findViewById(R.id.facebook_login); //페이스북 로그인 버튼
         loginButton.setReadPermissions("public_profile", "user_friends","email");
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) { //로그인 성공시 호출되는 메소드
-                Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
-                startActivity(intent);
-                finish();
-                Log.e("토큰",loginResult.getAccessToken().getToken());
+                /*Log.e("토큰",loginResult.getAccessToken().getToken());
                 Log.e("유저아이디",loginResult.getAccessToken().getUserId());
-                Log.e("퍼미션 리스트",loginResult.getAccessToken().getPermissions()+"");
+                Log.e("퍼미션 리스트",loginResult.getAccessToken().getPermissions()+"");*/
 
                 //loginResult.getAccessToken() 정보를 가지고 유저 정보를 가져올수 있습니다.
-                GraphRequest request =GraphRequest.newMeRequest(loginResult.getAccessToken() ,
+
+                /*GraphRequest request =GraphRequest.newMeRequest(loginResult.getAccessToken() ,
                         new GraphRequest.GraphJSONObjectCallback() {
                             @Override
                             public void onCompleted(JSONObject object, GraphResponse response) {
@@ -64,7 +66,11 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                request.executeAsync();
+                request.executeAsync();*/
+
+                Intent intent = new Intent(MainActivity.this, LoginViewActivity.class);
+                startActivity(intent);
+                finish();
             }
 
             @Override
@@ -88,25 +94,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (NoSuchAlgorithmException e) {
 
         }*/
-        //kakao hash key
-
-
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "com.rival.hs.rival_android",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-
-        } catch (NoSuchAlgorithmException e) {
-
-        }
-
-
+        //get hash key
 
         /**카카오톡 로그아웃 요청**/
         //한번 로그인이 성공하면 세션 정보가 남아있어서 로그인창이 뜨지 않고 바로 onSuccess()메서드를 호출합니다.
@@ -120,6 +108,14 @@ public class MainActivity extends AppCompatActivity {
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
 
+    }
+
+    private void hideActionBar(){
+        ActionBar actionBar = getSupportActionBar();
+
+        if(actionBar != null){
+            actionBar.hide();
+        }
     }
 
     @Override
@@ -164,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                     //로그인에 성공하면 로그인한 사용자의 일련번호, 닉네임, 이미지url등을 리턴합니다.
                     //사용자 ID는 보안상의 문제로 제공하지 않고 일련번호는 제공합니다.
                     Log.e("UserProfile", userProfile.toString());
-                    Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+                    Intent intent = new Intent(MainActivity.this, LoginViewActivity.class);
                     startActivity(intent);
                     finish();
                 }
