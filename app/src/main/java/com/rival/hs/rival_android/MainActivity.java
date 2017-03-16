@@ -1,6 +1,5 @@
 package com.rival.hs.rival_android;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -30,53 +29,84 @@ import com.kakao.util.helper.log.Logger;
 import org.json.JSONObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     SessionCallback callback; //kakao
-    private CallbackManager callbackManager; //facebook
-
+    private LoginButton loginButton;
+    private CallbackManager callbackManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        FacebookSdk.sdkInitialize(this.getApplicationContext()); // SDK 초기화 (setContentView 보다 먼저 실행되어야합니다. 그렇지 않으면 Error.)
         setContentView(R.layout.activity_main);
-
-        callbackManager = CallbackManager.Factory.create();
-
-        LoginButton loginButton = (LoginButton) findViewById(R.id.facebook_login);
-        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+        callbackManager = CallbackManager.Factory.create();  //로그인 응답을 처리할 콜백 관리자
+        loginButton = (LoginButton)findViewById(R.id.facebook_login); //페이스북 로그인 버튼
+        loginButton.setReadPermissions("public_profile", "user_friends","email");
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void onSuccess(LoginResult loginResult) {
+            public void onSuccess(LoginResult loginResult) { //로그인 성공시 호출되는 메소드
                 Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
                 startActivity(intent);
                 finish();
+                Log.e("토큰",loginResult.getAccessToken().getToken());
+                Log.e("유저아이디",loginResult.getAccessToken().getUserId());
+                Log.e("퍼미션 리스트",loginResult.getAccessToken().getPermissions()+"");
 
-               /* GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
-                        Log.v("result",object.toString());
-                    }
-                });
-
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,email,gender,birthday");
-                graphRequest.setParameters(parameters);
-                graphRequest.executeAsync();*/
+                //loginResult.getAccessToken() 정보를 가지고 유저 정보를 가져올수 있습니다.
+                GraphRequest request =GraphRequest.newMeRequest(loginResult.getAccessToken() ,
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                try {
+                                    Log.e("user profile",object.toString());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                request.executeAsync();
             }
 
             @Override
-            public void onCancel() {
-
-            }
+            public void onError(FacebookException error) { }
 
             @Override
-            public void onError(FacebookException error) {
-                Log.e("LoginErr",error.toString());
-            }
+            public void onCancel() { }
         });
-        //facebook
+
+        /*try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    getPackageName(), PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.e("MY KEY HASH:",
+                        Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }*/
+        //kakao hash key
+
+
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.rival.hs.rival_android",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+
+
 
         /**카카오톡 로그아웃 요청**/
         //한번 로그인이 성공하면 세션 정보가 남아있어서 로그인창이 뜨지 않고 바로 onSuccess()메서드를 호출합니다.
@@ -98,8 +128,7 @@ public class MainActivity extends AppCompatActivity {
         if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
             return;
         }
-        callbackManager.onActivityResult(requestCode, resultCode, data);//facebook
-
+        callbackManager.onActivityResult(requestCode, resultCode, data); // facebook
         super.onActivityResult(requestCode, resultCode, data);
     }
 
