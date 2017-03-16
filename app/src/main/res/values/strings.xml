@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Rival_android</string>
+    <string name="app_name">Rival</string>
     <string name="facebook_app_id">1153663151429989</string>
 
     <string name="action_settings">Settings</string>
-    <string name="action_search"></string>
+    <string name="action_search">Search</string>
 </resources>

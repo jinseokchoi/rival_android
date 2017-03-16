@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //kakao
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //간편로그인시 호출 ,없으면 간편로그인시 로그인 성공화면으로 넘어가지 않음
@@ -159,7 +160,9 @@ public class MainActivity extends AppCompatActivity {
                 public void onSuccess(UserProfile userProfile) {
                     //로그인에 성공하면 로그인한 사용자의 일련번호, 닉네임, 이미지url등을 리턴합니다.
                     //사용자 ID는 보안상의 문제로 제공하지 않고 일련번호는 제공합니다.
-                    Log.e("UserProfile", userProfile.toString());
+                    Log.d("myLog", "userProfile" + userProfile.getId());
+                    Log.d("myLog", "userProfile" + userProfile.getNickname());
+                    Log.d("myLog", "userProfile" + userProfile.getThumbnailImagePath());
                     Intent intent = new Intent(MainActivity.this, LoginViewActivity.class);
                     startActivity(intent);
                     finish();
