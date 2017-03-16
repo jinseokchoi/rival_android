@@ -3,27 +3,27 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         release {
-            keyAlias 'Key save'
-            keyPassword '91177500'
-            storeFile file('C:/딤썸초이/Android Kakao Key/release_key_store.jks')
-            storePassword '91177500'
+            keyAlias 'release'
+            keyPassword '123456'
+            storeFile file('D:/project/rival_android/release.jks')
+            storePassword '123456'
         }
     }
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
-    defaultConfig {
-        applicationId "com.rival.hs.rival_android"
-        minSdkVersion 16
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        debug {
+            compileSdkVersion 23
+            buildToolsVersion '25.0.0'
+            defaultConfig {
+                applicationId "com.rival.hs.rival_android"
+                minSdkVersion 16
+                targetSdkVersion 23
+                versionCode 1
+                versionName "1.0"
+            }
+            buildTypes {
+                release {
+                    minifyEnabled false
+                    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                }
+                debug {
             signingConfig signingConfigs.release
         }
     }
