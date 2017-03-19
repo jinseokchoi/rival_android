@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -34,15 +36,27 @@ import java.security.NoSuchAlgorithmException;
 public class MainActivity extends AppCompatActivity {
     SessionCallback callback; //kakao
     private LoginButton loginButton;
+    Button button2;
     private CallbackManager callbackManager;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext()); // SDK 초기화 (setContentView 보다 먼저 실행되어야합니다. 그렇지 않으면 Error.)
         setContentView(R.layout.activity_main);
 
-        hideActionBar();
+        button2 = (Button)findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+                startActivity(intent);
+            }
+        });
 
+        hideActionBar();
         callbackManager = CallbackManager.Factory.create();  //로그인 응답을 처리할 콜백 관리자
         loginButton = (LoginButton)findViewById(R.id.facebook_login); //페이스북 로그인 버튼
         loginButton.setReadPermissions("public_profile", "user_friends","email");
@@ -57,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
                 /*GraphRequest request =GraphRequest.newMeRequest(loginResult.getAccessToken() ,
                         new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
+
                             public void onCompleted(JSONObject object, GraphResponse response) {
                                 try {
                                     Log.e("user profile",object.toString());
@@ -67,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                 request.executeAsync();*/
-
+                Log.e("UserProfile", loginResult.toString());
                 Intent intent = new Intent(MainActivity.this, LoginViewActivity.class);
                 startActivity(intent);
                 finish();
