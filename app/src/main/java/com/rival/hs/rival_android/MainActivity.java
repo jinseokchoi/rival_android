@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                         });
                 request.executeAsync();*/
                 Log.e("UserProfile", loginResult.toString());
-                Intent intent = new Intent(MainActivity.this, LoginViewActivity.class);
+                Intent intent = new Intent(MainActivity.this, MenuActivity.class);
                 startActivity(intent);
                 finish();
             }

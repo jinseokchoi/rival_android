@@ -16,7 +16,7 @@
         android:weightSum="1">
 
         <Button
-            android:id="@+id/imageButton"
+            android:id="@+id/footballButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
@@ -30,7 +30,7 @@
             android:visibility="visible" />
 
         <Button
-            android:id="@+id/imageButton1"
+            android:id="@+id/baseballButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
@@ -51,7 +51,7 @@
         android:weightSum="1">
 
         <Button
-            android:id="@+id/imageButton2"
+            android:id="@+id/basketballButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
@@ -64,7 +64,7 @@
             android:visibility="visible" />
 
         <Button
-            android:id="@+id/imageButton3"
+            android:id="@+id/volleyfootballButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
@@ -85,7 +85,7 @@
         android:weightSum="1">
 
         <Button
-            android:id="@+id/imageButton4"
+            android:id="@+id/billiardButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
@@ -98,7 +98,7 @@
             android:visibility="visible" />
 
         <Button
-            android:id="@+id/imageButton5"
+            android:id="@+id/bowingButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
