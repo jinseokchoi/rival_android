@@ -6,6 +6,7 @@
 
     <string name="open">1</string>
     <string name="close">1</string>
+    <string name="appbar_scrolling_view_behavior"></string>
 
     <string name="action_search">Search</string>
 
