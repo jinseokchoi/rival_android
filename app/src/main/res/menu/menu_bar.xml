@@ -1,4 +1,7 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
 
     <!-- 액션 버튼으로써 나타나는 "서치" 아이템  -->
     <!--<item android:id="@+id/action_search"-->
@@ -12,4 +15,21 @@
         android:title="@string/action_settings"/>
         <!--android:showAsAction="never"-->
 
+    <item
+        android:id="@+id/menu_login"
+        android:orderInCategory="100"
+        android:title="로그인"
+        />
+
+    <item
+        android:id="@+id/menu_logout"
+        android:orderInCategory="100"
+        android:title="로그아웃"
+        />
+
+    <item
+        android:id="@+id/menu_a"
+        android:orderInCategory="100"
+        android:title="다음"
+        />
 </menu>
