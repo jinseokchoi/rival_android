@@ -5,10 +5,15 @@ android {
         release {
             keyAlias 'release'
             keyPassword '123456'
-            storeFile file('D:/project/rival_android/release.jks')
+            storeFile file('C:/Josoojong/rival/rival_android/release.jks')
             storePassword '123456'
         }
     }
+
+    repositories {
+        mavenCentral()
+    }
+
             compileSdkVersion 23
             buildToolsVersion '25.0.0'
             defaultConfig {

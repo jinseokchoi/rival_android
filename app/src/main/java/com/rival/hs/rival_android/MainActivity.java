@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         hideActionBar();
         callbackManager = CallbackManager.Factory.create();  //로그인 응답을 처리할 콜백 관리자
         loginButton = (LoginButton)findViewById(R.id.facebook_login); //페이스북 로그인 버튼
@@ -94,20 +93,20 @@ public class MainActivity extends AppCompatActivity {
             public void onCancel() { }
         });
 
-        /*try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    getPackageName(), PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.e("MY KEY HASH:",
-                        Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException e) {
+                 try {
+                PackageInfo info = getPackageManager().getPackageInfo(
+                        getPackageName(), PackageManager.GET_SIGNATURES);
+                for (Signature signature : info.signatures) {
+                    MessageDigest md = MessageDigest.getInstance("SHA");
+                    md.update(signature.toByteArray());
+                    Log.e("MY KEY HASH:",
+                            Base64.encodeToString(md.digest(), Base64.DEFAULT));
+                }
+            } catch (PackageManager.NameNotFoundException e) {
 
         } catch (NoSuchAlgorithmException e) {
 
-        }*/
+        }
         //get hash key
 
         /**카카오톡 로그아웃 요청**/
