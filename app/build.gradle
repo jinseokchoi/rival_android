@@ -9,6 +9,7 @@ android {
             storePassword '123456'
         }
     }
+
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
     defaultConfig {
@@ -41,4 +42,15 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile group: project.KAKAO_SDK_GROUP, name: 'usermgmt', version: project.KAKAO_SDK_VERSION
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile group: 'com.kakao.sdk', name: 'usermgmt', version: project.KAKAO_SDK_VERSION
+    // 카카오링크 sdk를 사용하기 위해 필요.
+    compile group: 'com.kakao.sdk', name: 'kakaolink', version: project.KAKAO_SDK_VERSION
+    // 카카오톡 sdk를 사용하기 위해 필요.
+    compile group: 'com.kakao.sdk', name: 'kakaotalk', version: project.KAKAO_SDK_VERSION
+    // 카카오내비 sdk를 사용하기 위해 필요.
+    //compile group: 'com.kakao.sdk', name: 'kakaonavi', version: project.KAKAO_SDK_VERSION
+    // 카카오스토리 sdk를 사용하기 위해 필요.
+    compile group: 'com.kakao.sdk', name: 'kakaostory', version: project.KAKAO_SDK_VERSION
+    // push sdk를 사용하기 위해 필요.
+    compile group: 'com.kakao.sdk', name: 'push', version: project.KAKAO_SDK_VERSION
 }

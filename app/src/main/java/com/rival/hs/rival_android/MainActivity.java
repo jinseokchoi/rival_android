@@ -1,13 +1,8 @@
 package com.rival.hs.rival_android;
-
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,23 +10,18 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.kakao.auth.ErrorCode;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
-import com.kakao.usermgmt.callback.MeResponseCallback;
-import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
-import org.json.JSONObject;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     SessionCallback callback; //kakao
@@ -40,14 +30,14 @@ public class MainActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         FacebookSdk.sdkInitialize(this.getApplicationContext()); // SDK 초기화 (setContentView 보다 먼저 실행되어야합니다. 그렇지 않으면 Error.)
         setContentView(R.layout.activity_main);
 
-        button2 = (Button)findViewById(R.id.button2);
+        button2 = (Button) findViewById(R.id.button2);
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,9 +47,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
         hideActionBar();
+
         callbackManager = CallbackManager.Factory.create();  //로그인 응답을 처리할 콜백 관리자
-        loginButton = (LoginButton)findViewById(R.id.facebook_login); //페이스북 로그인 버튼
-        loginButton.setReadPermissions("public_profile", "user_friends","email");
+
+
+        //kakao
+        callback = new SessionCallback();
+        Session.getCurrentSession().addCallback(callback);
+        Session.getCurrentSession().checkAndImplicitOpen();
+
+
+
+
+        loginButton = (LoginButton) findViewById(R.id.facebook_login); //페이스북 로그인 버튼
+        loginButton.setReadPermissions("public_profile", "user_friends", "email");
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) { //로그인 성공시 호출되는 메소드
@@ -88,10 +89,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onError(FacebookException error) { }
+            public void onError(FacebookException error) {
+            }
 
             @Override
-            public void onCancel() { }
+            public void onCancel() {
+            }
         });
 
         /*try {
@@ -119,15 +122,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        callback = new SessionCallback();
-        Session.getCurrentSession().addCallback(callback);
 
     }
 
-    private void hideActionBar(){
+    private void hideActionBar() {
         ActionBar actionBar = getSupportActionBar();
 
-        if(actionBar != null){
+        if (actionBar != null) {
             actionBar.hide();
         }
     }
@@ -135,12 +136,17 @@ public class MainActivity extends AppCompatActivity {
     //kakao
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         //간편로그인시 호출 ,없으면 간편로그인시 로그인 성공화면으로 넘어가지 않음
         if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
+
             return;
         }
+
         callbackManager.onActivityResult(requestCode, resultCode, data); // facebook
         super.onActivityResult(requestCode, resultCode, data);
+
+
     }
 
     private class SessionCallback implements ISessionCallback {
@@ -148,46 +154,31 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSessionOpened() {
 
-            UserManagement.requestMe(new MeResponseCallback() {
-                @Override
-                public void onFailure(ErrorResult errorResult) {
-                    String message = "failed to get user info. msg=" + errorResult;
-                    Logger.d(message);
 
-                    ErrorCode result = ErrorCode.valueOf(errorResult.getErrorCode());
-                    if (result == ErrorCode.CLIENT_ERROR_CODE) {
-                        finish();
-                    } else {
-                    }
-                }
+            HttpComunication test = new HttpComunication();
 
-                @Override
-                public void onSessionClosed(ErrorResult errorResult) {
+            test.send();
 
-                }
+            redirectSignupActivity();
 
-                @Override
-                public void onNotSignedUp() {
-                }
 
-                @Override
-                public void onSuccess(UserProfile userProfile) {
-                    //로그인에 성공하면 로그인한 사용자의 일련번호, 닉네임, 이미지url등을 리턴합니다.
-                    //사용자 ID는 보안상의 문제로 제공하지 않고 일련번호는 제공합니다.
-                    Log.d("myLog", "userProfile" + userProfile.getId());
-                    Log.d("myLog", "userProfile" + userProfile.getNickname());
-                    Log.d("myLog", "userProfile" + userProfile.getThumbnailImagePath());
-                    Intent intent = new Intent(MainActivity.this, LoginViewActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            });
-
+            Log.e("park", "onSessionOpened: success" );
         }
 
         @Override
         public void onSessionOpenFailed(KakaoException exception) {
-            // 세션 연결이 실패했을때
+            Log.e("park", "onSessionOpened: fail" );
+
+            if(exception != null) {
+                Log.e("park", "onSessionOpened: "+exception );
+
+            }
         }
+        protected void redirectSignupActivity() {
+            final Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
     }
 }
