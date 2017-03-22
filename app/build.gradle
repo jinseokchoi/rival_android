@@ -2,29 +2,29 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        release {
-            keyAlias 'release'
-            keyPassword '123456'
-            storeFile file('D:/project/rival_android/release.jks')
-            storePassword '123456'
+        RI {
+            keyAlias 'myapp'
+            keyPassword 'jy2411'
+            storeFile file('/Users/Minwoo/Desktop/park.jks')
+            storePassword 'jy2411'
         }
     }
-            compileSdkVersion 23
-            buildToolsVersion '25.0.0'
-            defaultConfig {
-                applicationId "com.rival.hs.rival_android"
-                minSdkVersion 16
-                targetSdkVersion 23
-                versionCode 1
-                versionName "1.0"
-            }
-            buildTypes {
-                release {
-                    minifyEnabled false
-                    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-                }
-                debug {
-            signingConfig signingConfigs.release
+    compileSdkVersion 23
+    buildToolsVersion '25.0.0'
+    defaultConfig {
+        applicationId "com.rival.hs.rival_android"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.RI
         }
     }
 }
@@ -33,6 +33,16 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
-    compile group: project.KAKAO_SDK_GROUP, name: 'usermgmt', version: project.KAKAO_SDK_VERSION
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile group: 'com.kakao.sdk', name: 'usermgmt', version: project.KAKAO_SDK_VERSION
+    // 카카오링크 sdk를 사용하기 위해 필요.
+    compile group: 'com.kakao.sdk', name: 'kakaolink', version: project.KAKAO_SDK_VERSION
+    // 카카오톡 sdk를 사용하기 위해 필요.
+    compile group: 'com.kakao.sdk', name: 'kakaotalk', version: project.KAKAO_SDK_VERSION
+    // 카카오내비 sdk를 사용하기 위해 필요.
+    //compile group: 'com.kakao.sdk', name: 'kakaonavi', version: project.KAKAO_SDK_VERSION
+    // 카카오스토리 sdk를 사용하기 위해 필요.
+    compile group: 'com.kakao.sdk', name: 'kakaostory', version: project.KAKAO_SDK_VERSION
+    // push sdk를 사용하기 위해 필요.
+    compile group: 'com.kakao.sdk', name: 'push', version: project.KAKAO_SDK_VERSION
 }
