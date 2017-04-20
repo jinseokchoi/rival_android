@@ -1,4 +1,5 @@
 package com.rival.hs.rival_android;
+
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -10,6 +11,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -21,6 +23,8 @@ import com.kakao.auth.Session;
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
+import com.kakao.usermgmt.callback.MeResponseCallback;
+import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
 
@@ -55,13 +59,14 @@ public class MainActivity extends AppCompatActivity {
 
         callbackManager = CallbackManager.Factory.create();  //로그인 응답을 처리할 콜백 관리자
 
-
         //kakao
-        callback = new SessionCallback();
-        Session.getCurrentSession().addCallback(callback);
-        Session.getCurrentSession().checkAndImplicitOpen();
-
-
+        //if (Session.getCurrentSession().isClosed()) {
+            callback = new SessionCallback();
+            Session.getCurrentSession().addCallback(callback);
+            Session.getCurrentSession().checkAndImplicitOpen();
+        //} else {
+        //    redirectSignupActivity();
+        //}
 
 
         loginButton = (LoginButton) findViewById(R.id.facebook_login); //페이스북 로그인 버튼
@@ -102,30 +107,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-                 try {
-                PackageInfo info = getPackageManager().getPackageInfo(
-                        getPackageName(), PackageManager.GET_SIGNATURES);
-                for (Signature signature : info.signatures) {
-                    MessageDigest md = MessageDigest.getInstance("SHA");
-                    md.update(signature.toByteArray());
-                    Log.e("MY KEY HASH:",
-                            Base64.encodeToString(md.digest(), Base64.DEFAULT));
-                }
-            } catch (PackageManager.NameNotFoundException e) {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    getPackageName(), PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.e("MY KEY HASH:",
+                        Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
 
         } catch (NoSuchAlgorithmException e) {
 
         }
         //get hash key
-
-        /**카카오톡 로그아웃 요청**/
-        //한번 로그인이 성공하면 세션 정보가 남아있어서 로그인창이 뜨지 않고 바로 onSuccess()메서드를 호출합니다.
-        UserManagement.requestLogout(new LogoutResponseCallback() {
-            @Override
-            public void onCompleteLogout() {
-                //로그아웃 성공 후 하고싶은 내용
-            }
-        });
 
 
     }
@@ -148,10 +144,16 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        callbackManager.onActivityResult(requestCode, resultCode, data); // facebook
+        //callbackManager.onActivityResult(requestCode, resultCode, data); // facebook
         super.onActivityResult(requestCode, resultCode, data);
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Session.getCurrentSession().removeCallback(callback);
     }
 
     private class SessionCallback implements ISessionCallback {
@@ -167,23 +169,24 @@ public class MainActivity extends AppCompatActivity {
             redirectSignupActivity();
 
 
-            Log.e("park", "onSessionOpened: success" );
+            Log.e("park", "onSessionOpened: success");
         }
 
         @Override
         public void onSessionOpenFailed(KakaoException exception) {
-            Log.e("park", "onSessionOpened: fail" );
+            Log.e("park", "onSessionOpened: fail");
 
-            if(exception != null) {
-                Log.e("park", "onSessionOpened: "+exception );
+            if (exception != null) {
+                Log.e("park", "onSessionOpened: " + exception);
 
             }
         }
-        protected void redirectSignupActivity() {
-            final Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
-            startActivity(intent);
-            finish();
-        }
+    }
 
+    protected void redirectSignupActivity() {
+        //final Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
+        final Intent intent = new Intent(this, MenuActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

@@ -1,7 +1,10 @@
 package com.rival.hs.rival_android;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -15,14 +18,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kakao.auth.ErrorCode;
+import com.kakao.auth.Session;
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.helper.log.Logger;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+
+import static android.R.attr.bitmap;
 
 /**
  * Created by HeeJoongKim on 2017-03-18.
@@ -37,6 +52,9 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
     Button bowingButton;
 
     TextView nick;
+    ImageView profile;
+
+    Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +67,7 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         View nav_header_view = navigationV.getHeaderView(0);
 
         nick = (TextView)nav_header_view.findViewById(R.id.nickname);
+        profile = (ImageView)nav_header_view.findViewById(R.id.profileiamge);
         requestMe();
 
         // FootballButton
@@ -129,6 +148,7 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -189,6 +209,12 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    protected void redirectLoginActivity() {
+        final Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private void requestMe() {
         UserManagement.requestMe(new MeResponseCallback() {
             @Override
@@ -197,6 +223,13 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
                 Logger.d(message);
 
                 //redirectLoginActivity();
+
+                ErrorCode result = ErrorCode.valueOf(errorResult.getErrorCode());
+                if(result == ErrorCode.CLIENT_ERROR_CODE) {
+                    finish();
+                } else {
+                    //redirectLoginActivity();
+                }
             }
 
             @Override
@@ -205,10 +238,31 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
             }
 
             @Override
-            public void onSuccess(UserProfile userProfile) {    //성공
+            public void onSuccess(final UserProfile userProfile) {    //성공
                 Logger.d("UserProfile : " + userProfile);
+
                 nick.setText(userProfile.getNickname());
-                //redirectMainActivity();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            bitmap = getBitmap(userProfile.getThumbnailImagePath());
+                        } catch (Exception e) {
+
+                        } finally {
+                            if(bitmap != null) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        profile.setImageBitmap(bitmap);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }).start();
+
             }
 
             @Override
@@ -216,5 +270,30 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
                 //showSignup();
             }
         });
+    }
+
+    private Bitmap getBitmap(String url) {
+        URL imgUrl = null;
+        HttpURLConnection connection = null;
+        InputStream is = null;
+
+        Bitmap retBitmap = null;
+
+        try {
+            imgUrl = new URL(url);
+            connection = (HttpURLConnection)imgUrl.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            is = connection.getInputStream();
+            retBitmap = BitmapFactory.decodeStream(is);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if(connection != null) {
+                connection.disconnect();
+            }
+            return retBitmap;
+        }
     }
 }
