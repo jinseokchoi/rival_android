@@ -3,6 +3,7 @@ package com.rival.hs.rival_android;
 /**
  * Created by Jinseok on 2017-03-07.
  */
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,16 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+import com.kakao.auth.ErrorCode;
+import com.kakao.auth.ISessionCallback;
+import com.kakao.auth.Session;
+import com.kakao.network.ErrorResult;
+import com.kakao.usermgmt.UserManagement;
+import com.kakao.usermgmt.callback.LogoutResponseCallback;
+import com.kakao.usermgmt.callback.MeResponseCallback;
+import com.kakao.usermgmt.response.model.UserProfile;
+import com.kakao.util.exception.KakaoException;
+import com.kakao.util.helper.log.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,6 +99,8 @@ public class LoginViewActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.menu_logout:
+                onClickLogout();
+
                 Toast.makeText(getApplicationContext(), "로그아웃 메뉴 클릭",
                         Toast.LENGTH_SHORT).show();
                 return true;
@@ -97,5 +110,16 @@ public class LoginViewActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClickLogout() {
+        UserManagement.requestLogout(new LogoutResponseCallback() {
+            @Override
+            public void onCompleteLogout() {
+                Intent intent = new Intent(LoginViewActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }

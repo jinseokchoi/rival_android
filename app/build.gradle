@@ -5,27 +5,31 @@ android {
         release {
             keyAlias 'release'
             keyPassword '123456'
-            storeFile file('D:/project/rival_android/release.jks')
+            storeFile file('C:/Josoojong/rival/rival_android/release.jks')
             storePassword '123456'
         }
     }
 
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
-    defaultConfig {
-        applicationId "com.rival.hs.rival_android"
-        minSdkVersion 15
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    repositories {
+        mavenCentral()
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        debug {
+
+            compileSdkVersion 25
+            buildToolsVersion '25.0.2'
+            defaultConfig {
+                applicationId "com.rival.hs.rival_android"
+                minSdkVersion 15
+                targetSdkVersion 25
+                versionCode 1
+                versionName "1.0"
+                //testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+            }
+            buildTypes {
+                release {
+                    minifyEnabled false
+                    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                }
+                debug {
             signingConfig signingConfigs.release
         }
     }
